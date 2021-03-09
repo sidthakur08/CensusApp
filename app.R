@@ -8,7 +8,7 @@ library(mapproj)
 
 # User interface ----
 ui <- fluidPage(
-  titlePanel("censusVis"),
+  titlePanel("Census Visualization"),
   
   sidebarLayout(
     sidebarPanel(
@@ -17,8 +17,10 @@ ui <- fluidPage(
       
       selectInput("var", 
                   label = "Choose a variable to display",
-                  choices = c("Percent White", "Percent Black",
-                              "Percent Hispanic", "Percent Asian"),
+                  choices = c("Percent White", 
+                              "Percent Black",
+                              "Percent Hispanic", 
+                              "Percent Asian"),
                   selected = "Percent White"),
       
       sliderInput("range", 
@@ -26,12 +28,18 @@ ui <- fluidPage(
                   min = 0, max = 100, value = c(0, 100))
     ),
     
-    mainPanel(plotOutput("map"))
+    mainPanel(
+      textOutput("text"),
+      plotOutput("map")
+      )
   )
 )
 
 # Server logic ----
 server <- function(input, output) {
+  output$text <- renderText(
+    paste("You have selected ",input$var," for the range, ",input$range[1]," to ",input$range[2])
+  )
   output$map <- renderPlot({
     data <- switch(input$var,
                    "Percent White" = counties$white,
